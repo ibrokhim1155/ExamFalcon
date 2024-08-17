@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from customer import views, auth_views
+from customer import views
 
 urlpatterns = [
     path('customer/', views.customer_list, name='customer_list'),

@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from . import auth_views
+from user import auth_views
 
 urlpatterns = [
     path('logout/', auth_views.user_logout, name='logout'),
