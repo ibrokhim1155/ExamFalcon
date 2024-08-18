@@ -1,12 +1,13 @@
 from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
-
+from django.core.paginator import Paginator
 from .forms import CustomerForm
 from .models import Customer
 
 
 def customer_list(request):
+
     filter = request.GET.get('filter', '')
     customers = Customer.objects.all()
     search = request.GET.get('search')
@@ -16,8 +17,13 @@ def customer_list(request):
         customers = Customer.objects.filter(Q(first_name__icontains=search) |
                                             Q(last_name__icontains=search) |
                                             Q(email__icontains=search))
+    paginator = Paginator(customers,6)
+    page = request.GET.get('page')
+    page_obj = paginator.get_page(page)
+    context={'customers':page_obj}
 
-    return render(request, 'customer/customer-list.html', {'customers': customers})
+
+    return render(request, 'customer/customer-list.html', context)
 
 
 def customer_create(request):
