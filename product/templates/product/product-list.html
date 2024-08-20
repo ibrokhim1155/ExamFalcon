@@ -412,6 +412,29 @@
                     </li>
                 </ul>
             </nav>
+
+
+            {% if messages %}
+                {% for message in messages %}
+                    {% if 'success' in message.tags %}
+                        <div class="alert alert-success alert-dismissible fade show"
+                             role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close"
+                                    data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning alert-dismissible fade show"
+                             role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close"
+                                    data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
             <div class="card mb-3">
                 <div class="card-body">
                     <div class="row flex-between-center">
@@ -500,13 +523,26 @@
                                                         </p>
                                                     </div>
                                                 </div>
-                                                <div class="mt-2"><a
-                                                        class="btn btn-sm btn-outline-secondary border-300 d-lg-block me-2 me-lg-0"
-                                                        href="#!"><span class="far fa-heart"></span><span
-                                                        class="ms-2 d-none d-md-inline-block">Favourite</span></a><a
-                                                        class="btn btn-sm btn-primary d-lg-block mt-lg-2"
-                                                        href="#!"><span class="fas fa-cart-plus"> </span><span
-                                                        class="ms-2 d-none d-md-inline-block">Add to Cart</span></a>
+                                                <div class="mt-2">
+                                                    <a class="btn btn-sm btn-outline-secondary border-300 d-lg-block me-2 me-lg-0"
+                                                       href="#!">
+                                                        <span class="far fa-heart"></span>
+                                                        <span class="ms-2 d-none d-md-inline-block">Favourite</span>
+                                                    </a>
+                                                    <a class="btn btn-sm btn-primary d-lg-block mt-lg-2" href="#!">
+                                                        <span class="fas fa-cart-plus"> </span>
+                                                        <span class="ms-2 d-none d-md-inline-block">Add to Cart</span>
+                                                    </a>
+                                                    <a class="btn btn-sm btn-danger d-lg-block mt-lg-2"
+                                                       href="{% url 'product-update' product.id %}">
+                                                        <span class="fas fa-cog"> </span>
+                                                        <span class="ms-2 d-none d-md-inline-block">Edite</span>
+                                                    </a>
+                                                    <a class="btn btn-sm btn-danger d-lg-block mt-lg-2"
+                                                       href="{% url 'product-delete' product.id %}">
+                                                        <span class="fas fa-trash"> </span>
+                                                        <span class="ms-2 d-none d-md-inline-block">Delete</span>
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>
