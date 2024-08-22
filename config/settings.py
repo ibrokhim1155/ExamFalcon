@@ -80,6 +80,14 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+# 'default': {
+#     'ENGINE': 'django.db.backends.postgresql',
+#     'NAME': '',
+#     'PASSWORD': '1155',
+#     'HOST': 'localhost',
+#     'PORT': '5432',
+#     'USER': '',
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -192,3 +200,10 @@ JAZZMIN_UI_TWEAKS = {
     },
 }
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'ibrokhim1155@gmail.com'
+EMAIL_HOST_PASSWORD = 'hmbq wtbv mfpm zicm'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
