@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'customer.apps.CustomerConfig',
     'user',
-    'product'
+    'product',
+    'social_django'
 ]
 
 MIDDLEWARE = [
@@ -207,3 +208,12 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'ibrokhim1155@gmail.com'
 EMAIL_HOST_PASSWORD = 'hmbq wtbv mfpm zicm'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.google.GoogleOAuth2',
+)
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '45683647384-66q5h9tr5j2edi2eo87ueshansh8kdhb.apps.googleusercontent.com' # Google Client ID
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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' # Google Client Secret
+
