@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'customer.apps.CustomerConfig',
     'user',
     'product',
-    'social_django'
+    'social_django',
+    'import_export',
 ]
 
 MIDDLEWARE = [
