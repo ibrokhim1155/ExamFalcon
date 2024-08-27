@@ -1,11 +1,16 @@
+import csv
+import datetime
+import json
+from django.http import HttpResponse
 from django.views import View
-from django.urls import reverse_lazy
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Customer
 from .forms import CustomerForm
 from django.db.models import Q
 from django.core.paginator import Paginator
+from openpyxl import Workbook
+
 
 class CustomerListView(View):
     def get(self, request, *args, **kwargs):
@@ -82,3 +87,55 @@ class CustomerDeleteView(View):
         customer.delete()
         messages.success(request, 'Your customer has been deleted!')
         return redirect('customer_list')
+
+
+def export_data(request):
+    date = datetime.datetime.now().strftime("%Y-%m-%d")
+    format = request.GET.get('format')
+
+    if format == 'csv':
+        meta = Customer._meta
+        field_names = [field.name for field in meta.fields if field.name not in ['image']]
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename={Customer._meta.object_name}-{date}.csv'
+        writer = csv.writer(response)
+        writer.writerow(field_names)
+        for obj in Customer.objects.all():
+            row = [getattr(obj, field) for field in field_names]
+            writer.writerow(row)
+
+    elif format == 'json':
+        field_names = [field.name for field in Customer._meta.fields if field.name not in ['image']]
+        data = list(Customer.objects.all().values(*field_names))
+        response = HttpResponse(content_type='application/json')
+        response.write(json.dumps(data, indent=4))
+        response['Content-Disposition'] = f'attachment; filename={Customer._meta.object_name}-{date}.json'
+
+    elif format == 'xlsx':
+        field_names = [field.name for field in Customer._meta.fields if field.name not in ['image']]
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = f'attachment; filename={Customer._meta.object_name}-{date}.xlsx'
+
+        wb = Workbook()
+        ws = wb.active
+        ws.title = 'Customers'
+        ws.append(field_names)
+
+        for obj in Customer.objects.all():
+            row = []
+            for field in field_names:
+                value = getattr(obj, field)
+                if isinstance(value, datetime.datetime) and value.tzinfo is not None:
+                    value = value.replace(tzinfo=None)
+                elif isinstance(value, (datetime.date, datetime.time)):
+                    value = str(value)
+                row.append(value)
+            ws.append(row)
+
+        wb.save(response)
+
+    else:
+        response = HttpResponse(status=404)
+        response.content = 'Bad Request'
+
+    return response
