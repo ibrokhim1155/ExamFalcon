@@ -112,7 +112,7 @@ class ExportDataView(View):
             response['Content-Disposition'] = f'attachment; filename={Customer._meta.object_name}-{date}.json'
 
         elif format == 'xlsx':
-            field_names = [field.name for field in Customer._meta.fields if field.name not in ['image']]
+            field_names = [ field.name for field in Customer._meta.fields if field.name not in ['image']]
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             response['Content-Disposition'] = f'attachment; filename={Customer._meta.object_name}-{date}.xlsx'
 
