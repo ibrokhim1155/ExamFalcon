@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'product',
     'social_django',
     'import_export',
+    'app.apps.AppConfig',
 ]
 
 MIDDLEWARE = [
