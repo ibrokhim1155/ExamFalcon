@@ -19,12 +19,15 @@ class CustomerListView(View):
 
         customers = Customer.objects.all()
 
-        if filter_val:
-            customers = customers.order_by('-created_at')
         if search_query:
             customers = customers.filter(Q(first_name__icontains=search_query) |
                                          Q(last_name__icontains=search_query) |
                                          Q(email__icontains=search_query))
+
+        if filter_val:
+            customers = customers.order_by('-created_at')
+        else:
+            customers = customers.order_by('id')  # Default order if no filter
 
         paginator = Paginator(customers, 6)
         page = request.GET.get('page')
@@ -82,11 +85,12 @@ class CustomerUpdateView(View):
 
 
 class CustomerDeleteView(View):
-    def post(self, request, slug, *args, **kwargs):
+    def get(self, request, slug, *args, **kwargs):
         customer = get_object_or_404(Customer, slug=slug)
         customer.delete()
         messages.success(request, 'Your customer has been deleted!')
         return redirect('customer_list')
+
 
 class ExportDataView(View):
     def get(self, request, *args, **kwargs):
@@ -112,7 +116,7 @@ class ExportDataView(View):
             response['Content-Disposition'] = f'attachment; filename={Customer._meta.object_name}-{date}.json'
 
         elif format == 'xlsx':
-            field_names = [ field.name for field in Customer._meta.fields if field.name not in ['image']]
+            field_names = [field.name for field in Customer._meta.fields if field.name not in ['image']]
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
             response['Content-Disposition'] = f'attachment; filename={Customer._meta.object_name}-{date}.xlsx'
 
@@ -128,14 +132,13 @@ class ExportDataView(View):
                     if isinstance(value, datetime.datetime) and value.tzinfo is not None:
                         value = value.replace(tzinfo=None)
                     elif isinstance(value, (datetime.date, datetime.time)):
-                        value = str(value)
+                        value = value.isoformat()
                     row.append(value)
                 ws.append(row)
 
             wb.save(response)
 
         else:
-            response = HttpResponse(status=404)
-            response.content = 'Bad Request'
+            response = HttpResponse('Bad Request', status=400)
 
         return response
